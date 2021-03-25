@@ -1,0 +1,80 @@
+﻿@page "/"
+@layout CleanLayout
+@attribute [AllowAnonymous]
+@inject IJSRuntime js;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager;
+@using mgt_teams_explorer.Auth
+
+<AuthorizeView>
+    <Authorized>
+        <div>AUTHORZIED</div>
+    </Authorized>
+    <NotAuthorized>
+        <h3>Login</h3>
+        <div>
+            <mgt-teams-provider client-id="f676f828-bee1-4fe5-ac7e-db0b1dac0fb4"
+                                auth-popup-url="https://localhost:44392/auth"
+                                authority="https://login.microsoftonline.com/thomy.onmicrosoft.com">
+            </mgt-teams-provider>
+            <mgt-msal-provider client-id="f74ae1c5-5a03-482f-8fca-d105431e90b5"
+                               authority="https://login.microsoftonline.com/thomy.onmicrosoft.com"
+                               scopes="user.read,people.read,user.readbasic.all,contacts.read,calendars.read,TeamMember.Read.All"
+                               login-type="popup"
+                               depends-on="mgt-teams-provider">
+            </mgt-msal-provider>
+            <mgt-login id="login"></mgt-login>
+            <button type="button" id="helperBtn" class="btn btn-primary" @onclick="LoginCompleted" style="display:none">
+                I'm only here to help...
+            </button>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+
+@code {
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+        {
+            try
+            {
+                int state = await js.InvokeAsync<int>("getMGTProviderState");
+                if (state == 2)
+                    UserAuthenticated();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Unable to find getMGTProviderState on page");
+            }
+        }
+    }
+
+    public async Task LoginCompleted()
+    {
+        UserAuthenticated();
+
+    }
+
+    private async void UserAuthenticated()
+    {
+        string[] userInfo = await js.InvokeAsync<string[]>("getMGTUserInformation");
+        string token = await js.InvokeAsync<string>("getToken");
+
+        mgt_teams_explorer.Auth.User currentUser = new()
+        {
+            AccessToken = token,
+            Name = userInfo[0],
+            Email = userInfo[1],
+            UserId = userInfo[2]
+        };
+
+        ((MGTAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(currentUser);
+        NavigationManager.NavigateTo("/index");
+    }
+}

@@ -1,0 +1,115 @@
+﻿@page "/index"
+@layout CleanLayout
+
+@inject IJSRuntime js;
+@inject MyGraphService myGraphService;
+
+<h1>Hello, community world!</h1>
+
+Welcome to our SelectedTech/PnP Microsoft Graph Toolkit demo.
+
+<!--#region Auth  -->
+
+
+<AuthorizeView>
+    <Authorized>
+        <div>AUTHORZIED</div>
+    </Authorized>
+    <NotAuthorized>
+        <div>NOT AUTHORZIED</div>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+<!--#endregion -->
+
+<!--#region Demo 01  -->
+@*<div id="demo01">
+        <h2>mgt-agenda demo 01</h2>
+        <div>
+            <mgt-agenda group-by-day
+                        date="October 18, 2020"
+                        days="3">
+            </mgt-agenda>
+        </div>
+    </div>*@
+
+<!--#endregion -->
+<!--#region Demo 02  -->
+
+<div id="demo02">
+
+    <div class="demo02">
+        <button class="ffbsojd" @onclick="GetTeams">Get Teams</button>
+    </div>
+
+    <div class="demo02">
+        <RadzenDropDown TValue="Microsoft.Graph.Team" Data="@myTeams" TextProperty="DisplayName"
+                        ValueProperty="ID" Change=@(team => OnTeamsDropDownChange(team))>
+        </RadzenDropDown>
+    </div>
+
+    <div class="demo02" style="max-width:850px;">
+        <MemberRoster inputData="@teamMembers" />
+    </div>
+
+</div>
+
+<!--#endregion -->
+
+@code {
+
+    #region c# CODE
+    string token = null;
+
+    List<Team> myTeams;
+
+    List<CustomTeamMember> teamMembers;
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        //if (firstRender)
+        //{
+        //    await js.InvokeVoidAsync("login");
+        //}
+    }
+
+    private async void GetTeams(MouseEventArgs e)
+    {
+        //This is where "stuff" happens              
+        //-> Asking the mgt for the token
+        //token = await js.InvokeAsync<string>("getToken");
+
+        //Calling our custom "GraphService"
+        myTeams = await myGraphService.GetTeams();
+
+        //Telling the UI that is time to rerender.
+        StateHasChanged();
+    }
+
+    async void OnTeamsDropDownChange(object team)
+    {
+        Team selectedTeam = (Team)team;
+
+        teamMembers = await myGraphService.GetMembers(selectedTeam.Id);
+
+        StateHasChanged();
+    }
+
+    #endregion
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

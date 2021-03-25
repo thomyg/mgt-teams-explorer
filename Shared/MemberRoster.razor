@@ -1,0 +1,33 @@
+﻿
+@if (inputData is not null)
+{
+<div class="table-wrapper">
+    <table class="fl-table">
+        <thead>
+            <tr>
+                <th>DisplayName</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (CustomTeamMember ctm in inputData)
+            {
+            <tr>
+                <td>@ctm.DisplayName</td>
+                <td>@ctm.Email</td>
+                <td>@ctm.Roles</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+}
+
+@code
+{
+    [Parameter]
+    public List<CustomTeamMember> inputData { get; set; }
+}
+
+
