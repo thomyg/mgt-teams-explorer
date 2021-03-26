@@ -2,6 +2,9 @@
 
 Small sample that uses the Microsoft Grapht Toolkit at its authentication providers to authenticate against AAD either in Teams or as a stand alone Blazor Server application. 
 
+![alt text](https://github.com/thomyg/mgt-teams-explorer/blob/master/mgt-login_in_blazor.gif "Login screen")
+
+
 
 ## Authentication
 Implemented a custom AuthenticationState provider in Blazor based on this tutorial: https://www.youtube.com/watch?v=BmAnSNfFGsc Only the login page is accessible for unauthenticated users, all others are secured. On that Login.razor mgt-login is configured to either use the Teams Provider or the MSAL Provider depending on the environment.
