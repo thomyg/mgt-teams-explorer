@@ -4,10 +4,11 @@ Small sample that uses the Microsoft Grapht Toolkit at its authentication provid
 
 
 ## Authentication
-Implemented a custom AuthenticationState provider in Blazor based on this tutorial: https://www.youtube.com/watch?v=BmAnSNfFGsc
+Implemented a custom AuthenticationState provider in Blazor based on this tutorial: https://www.youtube.com/watch?v=BmAnSNfFGsc Only the login page is accessible for unauthenticated users, all others are secured. On that Login.razor mgt-login is configured to either use the Teams Provider or the MSAL Provider depending on the environment.
 
 There is a small "trick" to get the token from the JavaSript mgt-login component to Blazor. Adding and EventListener to "loginCompleted" of the mgt-login component just to virtually click a helper button. That helper button sits on the login page and is wired to the C# part of the solution. User will never see that button, but it does the need trick to get the information into C#.
 
+Login.razor:
 ```html
 <mgt-teams-provider client-id="f676f828-bee1-4fe5-ac7e-db0b1dac0fb4"
                     auth-popup-url="https://localhost:44392/auth"
@@ -24,6 +25,7 @@ There is a small "trick" to get the token from the JavaSript mgt-login component
         I'm only here to help...
 </button>
 ```
+StartUp.js
 ```javascript
 (function () {
     let loginBtn = document.getElementById("login");
@@ -34,6 +36,7 @@ There is a small "trick" to get the token from the JavaSript mgt-login component
 })();
 ```
 
+Login.razor:
 ```c#
 public async Task LoginCompleted()
 {
